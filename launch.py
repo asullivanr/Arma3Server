@@ -17,6 +17,7 @@ def env_defined(key):
     return key in os.environ and len(os.environ[key]) > 0
 
 CONFIG_FILE = os.environ["ARMA_CONFIG"]
+BASIC_FILE = os.environ["ARMA_BASIC_CONFIG"]
 KEYS = "/arma3/server/keys"
 
 if env_defined("CLEAR_KEYS") and os.environ["CLEAR_KEYS"] == "true" and os.path.isdir(KEYS):
@@ -109,6 +110,8 @@ if clients != 0:
 
 else:
     launch += ' -config="/arma3/server/configs/{}"'.format(CONFIG_FILE)
+
+launch += ' -cfg="/arma3/server/configs/{}"'.format(BASIC_FILE)
 
 launch += ' -port={} -name="{}" -profiles="/arma3/server/configs/profiles"'.format(
     os.environ["PORT"], os.environ["ARMA_PROFILE"]
