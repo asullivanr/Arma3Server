@@ -47,6 +47,8 @@ if os.environ["SKIP_INSTALL"] in ["", "false"]:
 # Mods
 
 mods = []
+servermods = []
+whitelistmods = []
 
 if os.environ["MODS_PRESET"] != "":
     if not client:
@@ -55,6 +57,16 @@ if os.environ["MODS_PRESET"] != "":
 
 if os.environ["MODS_LOCAL"] == "true" and os.path.exists("mods"):
     mods.extend(local.mods("mods"))
+
+if os.environ["MODS_SERVER_PRESET"] != "":
+    if not client:
+        client = api.login(os.environ["STEAM_USER"], os.environ["STEAM_PASSWORD"])
+    servermods.extend(workshop.preset(os.environ["MODS_SERVER_PRESET"], client))
+
+if os.environ["MODS_WHITELIST_PRESET"] != "":
+    if not client:
+        client = api.login(os.environ["STEAM_USER"], os.environ["STEAM_PASSWORD"])
+    whitelistmods.extend(workshop.preset(os.environ["MODS_WHITELIST_PRESET"], client))
 
 launch = "{} -limitFPS={} -world={} {} {}".format(
     os.environ["ARMA_BINARY"],
@@ -117,8 +129,8 @@ launch += ' -port={} -name="{}" -profiles="/arma3/server/configs/profiles"'.form
     os.environ["PORT"], os.environ["ARMA_PROFILE"]
 )
 
-if os.path.exists("servermods"):
-    launch += mod_param("serverMod", local.mods("servermods"))
+if os.environ["MODS_SERVER_PRESET"] != "":
+    launch += mod_param("serverMod", servermods)
 
 print("LAUNCHING ARMA SERVER WITH", launch, flush=True)
 os.chdir("/arma3/server")
